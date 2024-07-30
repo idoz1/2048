@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+        name="viewport">
+  <meta content="ie=edge" http-equiv="X-UA-Compatible">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-['Raleway'] grid grid-rows-[auto_1fr_auto] min-h-[100vh]">
+<header class="flex justify-between container max-w-[700px] mx-auto p-5 py-10">
+  <div>
+    <h1 class="text-7xl font-bold text-orange-700">
+      2048
+    </h1>
+
+    <p>
+      Join the tiles, get to 2048!
+    </p>
+  </div>
+
+  <p class="bg-orange-300 flex flex-col text-white font-bold text-2xl text-center p-5">
+      <span>
+        Score
+      </span>
+
+    <span id="score">-</span>
+  </p>
+</header>
+
+<main class="container max-w-[700px] mx-auto p-5 flex">
+  <section class="bg-neutral-400 w-[300px] h-[300px] p-3 m-auto font-bold text-2xl grid grid-cols-4 grid-rows-4 gap-3"
+           id="playfield">
+  </section>
+</main>
+
+<footer class="container max-w-[700px] mx-auto p-5">
+  <button id="howToPlayOpen">
+    How to Play
+  </button>
+</footer>
+
+<dialog>
+  <p>
+    How to play: Use your arrow keys to move the tiles. Tiles with the same number merge into one when they touch. Add
+    them up to reach 2048!
+  </p>
+  <button id="howToPlayClose">
+    Start playing →
+  </button>
+</dialog>
+
+
+<script>
+
+  const playfield = document.querySelector('#playfield')
+  let matrix = [
+    [4, 0, 2, 2],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ]
+
+  const startGame = () => {
+    matrix = generateMatrix()
+    addNewMin()
+    addNewMin()
+    drawField()
+    initEventListener()
+
+    console.table(matrix) // TODO: remove when game will be done
+  }
+
+  const drawField = () => {
+    playfield.innerHTML = '';
+    matrix.flat().forEach((item) => {
+      createCell(item)
+    })
+  }
+
+  const createCell = (value) => {
+    const div = document.createElement('div')
+    div.innerText = value ? value : '';
+    div.classList.value = "bg-amber-50 flex justify-center items-center"
+    playfield.appendChild(div)
+  }
+
+  const generateMatrix = () => {
+    return new Array(4).fill(0).map(() => new Array(4).fill(0))
+  }
+
+  const addNewMin = () => {
+    const newMinValue = Math.random() >= 0.7 ? 4 : 2;
+    const flattedMatrix = matrix.flat()
+    let randomIndex
+    do {
+      randomIndex = Math.floor(Math.random() * flattedMatrix.length)
+    } while (flattedMatrix[randomIndex] !== 0)
+
+    const rowIndex = Math.floor(randomIndex / 4)
+    const colIndex = Math.floor(randomIndex % 4)
+    matrix[rowIndex][colIndex] = newMinValue
+  }
+
+  const initEventListener = () => {
+    document.addEventListener('keydown', () => {
+      if (event.key === 'ArrowLeft') {
+        moveLeft()
+        addNewMin()
+        drawField()
+      }
+      if (event.key === 'ArrowRight') {
+        moveRight()
+        addNewMin()
+        drawField()
+      }
+    })
+  }
+
+  const moveLeft = () => {
+    matrix = matrix.map(
+      row => {
+        let filtredRow = row.filter(item => item > 0)
+        let mergedRow = filtredRow.map((item, index, currentRow) => {
+          if (item === currentRow[index + 1]) {
+            currentRow.splice(1, index + 1)
+            return item *= 2
+          } else {
+            return item
+          }
+        })
+        let resultRow = mergedRow.filter(item => item > 0)
+        while (resultRow.length < 4) {
+          resultRow.push(0)
+        }
+        return resultRow
+      }
+    )
+  }
+
+  const moveRight = () => {
+    matrix = matrix.map(
+      row => {
+        let filtredRow = row.filter(item => item > 0)
+        let mergedRow = filtredRow.reverse().map((item, index, currentRow) => {
+          if (item === currentRow[index + 1]) {
+            currentRow.splice(1, index + 1)
+            return item *= 2
+          } else {
+            return item
+          }
+        })
+        let resultRow = mergedRow.filter(item => item > 0)
+        while (resultRow.length < 4) {
+          resultRow.push(0)
+        }
+        return resultRow.reverse()
+      }
+    )
+  }
+
+  startGame()
+</script>
+</body>
+</html>
