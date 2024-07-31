@@ -110,14 +110,16 @@
   const initEventListener = () => {
     document.addEventListener('keydown', () => {
       if (event.key === 'ArrowLeft') {
-        moveLeft()
-        addNewMin()
-        drawField()
+        tryMove(event.key)
       }
       if (event.key === 'ArrowRight') {
-        moveRight()
-        addNewMin()
-        drawField()
+        tryMove(event.key)
+      }
+      if (event.key === 'ArrowUp') {
+        tryMove(event.key)
+      }
+      if (event.key === 'ArrowDown') {
+        tryMove(event.key)
       }
     })
   }
@@ -125,24 +127,119 @@
   const moveLeft = () => {
     matrix = matrix.map(
       row => {
-        let filtredRow = row.filter(item => item > 0)
-        let mergedRow = filtredRow.map((item, index, currentRow) => {
-          if (item === currentRow[index + 1]) {
-            currentRow.splice(1, index + 1)
-            return item *= 2
-          } else {
-            return item
-          }
-        })
-        let resultRow = mergedRow.filter(item => item > 0)
-        while (resultRow.length < 4) {
-          resultRow.push(0)
-        }
-        return resultRow
+        return doMove(row)
       }
     )
   }
 
+  const moveRight = () => {
+    matrix = matrix.map(
+      row => {
+        return doMove(row, true)
+      }
+    )
+  }
+
+  const moveUp = () => {
+    matrix = transposeMatrix(matrix).map(
+      row => {
+        return doMove(row)
+      }
+    )
+    matrix = transposeMatrix(matrix)
+  }
+
+  const moveDown = () => {
+    matrix = transposeMatrix(matrix).map(
+      row => {
+        return doMove(row, true)
+      }
+    )
+    matrix = transposeMatrix(matrix)
+  }
+
+  const doMove = (row, shouldReverse, shouldTranspose) => {
+    let resultRow = row.filter(item => item > 0)
+
+    resultRow = maybeReversedRow(resultRow, shouldReverse)
+
+    resultRow = resultRow.map((item, index, currentRow) => {
+      if (item === currentRow[index + 1]) {
+        currentRow.splice(1, index + 1)
+        return item *= 2
+      } else {
+        return item
+      }
+    })
+
+    resultRow = resultRow.filter(item => item > 0)
+
+    while (resultRow.length < 4) {
+      resultRow.push(0)
+    }
+
+    return maybeReversedRow(resultRow, shouldReverse)
+  }
+
+  const maybeReversedRow = (row, shouldReverse) => {
+    return shouldReverse ? row.reverse() : row
+  }
+
+  const transposeMatrix = (matrixToTranspose) => {
+    let transposedMatrix = generateMatrix()
+
+    matrixToTranspose.forEach((row, rowIndex) => {
+      row.forEach((cell, cellIndex) => {
+        transposedMatrix[cellIndex][rowIndex] = cell
+      })
+    })
+
+    return transposedMatrix
+  }
+
+  const tryMove = (direction) => {
+    if(canBeMoved()) {
+      switch (direction) {
+        case 'ArrowLeft':
+          moveLeft()
+          break;
+        case 'ArrowRight':
+          moveRight()
+          break;
+        case 'ArrowUp':
+          moveUp()
+          break;
+        case 'ArrowDown':
+          moveDown()
+          break;
+        default:
+          return ''
+      }
+
+      addNewMin()
+      drawField()
+    }
+
+  }
+  const canBeMoved = () => {
+    // TODO: зробити перевірку чи молжна зробити хід
+  }
+  const countScore = () => {
+    // TODO: зробити підрахунок поточного рахунки і виводити його на сторіну
+  }
+  const isEmptyExist = () => {
+    // TODO: Визначення що всі клітинка зайняті і немає можливості додати нову двійку або четвірку
+  }
+  const isLose = () => {
+    // TODO: Визначення що гравець програв
+  }
+  const isWin = () => {
+    // TODO: Визначення що гравець виграв
+  }
+  startGame()
+</script>
+</body>
+</html>
   const moveRight = () => {
     matrix = matrix.map(
       row => {
