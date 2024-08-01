@@ -1,3 +1,31 @@
+
+ДЗ №6: Гра "2048"
+Влад
+•
+Вчера
+100 баллов
+На основі прикріпленого файлу з грою "2048" необхідно доробити напступні фічі:
+Значення і виведення на сторінку поточного рахунку "Score"*
+Визначення що всі клітинка зайняті і немає можливості додати нову двійку або четвірку
+Визначення що принатисканні на кнопку керування не було зроблено жодного руху
+Визначення що гравець переміг**
+Визначення що гравець програв***
+Результатом виконання ДЗ має бути посилання на резопиторій GitHub та сторінку GitPages
+---
+
+* Score = сума всіх цифр на ігровому полі
+
+** Перемогою вважається створення клітинки з числом 2048
+
+*** Програшем вважається ситуація в якій у гравця немає можливості зробити ніякий рух та всі клітинки на полі зайняті
+
+index.html
+HTML
+Комментарии
+Мои задания
+Назначено
+Личные комментарии
+Сведения о задании
 <!doctype html>
 <html lang="en">
 <head>
@@ -236,31 +264,6 @@
   const isWin = () => {
     // TODO: Визначення що гравець виграв
   }
-  startGame()
-</script>
-</body>
-</html>
-  const moveRight = () => {
-    matrix = matrix.map(
-      row => {
-        let filtredRow = row.filter(item => item > 0)
-        let mergedRow = filtredRow.reverse().map((item, index, currentRow) => {
-          if (item === currentRow[index + 1]) {
-            currentRow.splice(1, index + 1)
-            return item *= 2
-          } else {
-            return item
-          }
-        })
-        let resultRow = mergedRow.filter(item => item > 0)
-        while (resultRow.length < 4) {
-          resultRow.push(0)
-        }
-        return resultRow.reverse()
-      }
-    )
-  }
-
   startGame()
 </script>
 </body>
