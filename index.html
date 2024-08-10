@@ -112,6 +112,15 @@
     matrix[rowIndex][colIndex] = newMinValue
   }
 
+  const isEmptyExist = () => {
+    if (matrix.flat().includes(0)) {
+      return true
+    }else {
+      return false 
+    }
+  }
+
+
   const initEventListener = () => {
     document.addEventListener('keydown', (event) => {
       event.preventDefault();
@@ -207,45 +216,81 @@
   }
 
   const tryMove = (direction) => {
+    let moved = false;
+
     if (canBeMoved()) {
       switch (direction) {
         case 'ArrowLeft':
-          moveLeft()
+          moveLeft();
+          moved = true;
           break;
         case 'ArrowRight':
-          moveRight()
+          moveRight();
+          moved = true;
           break;
         case 'ArrowUp':
-          moveUp()
+          moveUp();
+          moved = true;
           break;
         case 'ArrowDown':
-          moveDown()
+          moveDown();
+          moved = true;
           break;
         default:
-          return ''
+          return;
       }
 
-      addNewMin()
-      drawField()
-      countScore()
-      isWin()
-    }
+      if (moved) {
+        addNewMin();
+        drawField();
+        countScore();
 
-  }
+        if (isLose()) {
+          console.log("You lose!");
+        } else {
+          isWin();
+        }
+      }
+    }
+};
+
   const canBeMoved = () => {
-    // TODO: зробити перевірку чи молжна зробити хід
+
+  if (isEmptyExist()) {
     return true;
   }
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      if (matrix[row][col] === matrix[row][col + 1]) {
+        return true;
+      }
+    }
+  }
+
+  for (let col = 0; col < 4; col++) {
+    for (let row = 0; row < 3; row++) {
+      if (matrix[row][col] === matrix[row + 1][col]) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
   const countScore = () => {
     const maxTile = Math.max(...matrix.flat());
     scoreElement.innerText = maxTile;
   }
-  const isEmptyExist = () => {
-    // TODO: Визначення що всі клітинка зайняті і немає можливості додати нову двійку або четвірку
-  }
+
   const isLose = () => {
-    // TODO: Визначення що гравець програв
-  }
+    if (!canBeMoved()) {
+      console.log('You are lose!');
+      return true;
+    }
+    return false;
+};
   const isWin = () => {
     const maxTile = Math.max(...matrix.flat());
     if (maxTile === 2048) {
