@@ -77,8 +77,6 @@
     addNewMin()
     drawField()
     initEventListener()
-
-    console.table(matrix) // TODO: remove when game will be done
   }
 
   const drawField = () => {
@@ -103,13 +101,16 @@
     const newMinValue = Math.random() >= 0.7 ? 4 : 2;
     const flattedMatrix = matrix.flat()
     let randomIndex
-    do {
-      randomIndex = Math.floor(Math.random() * flattedMatrix.length)
-    } while (flattedMatrix[randomIndex] !== 0)
-
+    while (flattedMatrix[randomIndex] !== 0 && flattedMatrix.includes(0))
+   {
+    randomIndex = Math.floor(Math.random() * flattedMatrix.length)
+   }
+   if (randomIndex >= 0)
+   {
     const rowIndex = Math.floor(randomIndex / 4)
     const colIndex = Math.floor(randomIndex % 4)
     matrix[rowIndex][colIndex] = newMinValue
+   } 
   }
 
   const isEmptyExist = () => {
